@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+
+message HelloMessage{
+  string type =1;
+  string message = 2;
+  string client_host =3;
+  uint32 client_port=4;
+  uint32 identifier=5;
+}
+
+message StatusMessage{
+  string type =1;
+  uint32 message_count=2;
+  uint32 identifier=3;
+}

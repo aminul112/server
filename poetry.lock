@@ -68,6 +68,14 @@ docs = ["furo (>=2022.9.29)", "proselint (>=0.13)", "sphinx-autodoc-typehints (>
 test = ["appdirs (==1.4.4)", "pytest-cov (>=4)", "pytest-mock (>=3.10)", "pytest (>=7.2)"]
 
 [[package]]
+name = "protobuf"
+version = "3.20.3"
+description = "Protocol Buffers"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
@@ -86,7 +94,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "5e08d61dff53469a722bc26b131b44e73a244e499923c21b9bb87bbb5c2fca4c"
+content-hash = "d0b9fac36f495a23512d1c63fc55525aaf5cd34a8605e36245f39a654d5551a4"
 
 [metadata.files]
 black = []
@@ -95,5 +103,6 @@ colorama = []
 mypy-extensions = []
 pathspec = []
 platformdirs = []
+protobuf = []
 tomli = []
 typing-extensions = []
