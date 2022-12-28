@@ -2,7 +2,9 @@ import logging
 
 from base_enc_dec import BaseEncoderDecoder
 import messages_pb2 as messages
+
 log = logging.getLogger(__name__)
+
 
 class ProtobufEncoderDecoder(BaseEncoderDecoder):
     def encode_hello(self, msg_dict):
@@ -42,5 +44,3 @@ class ProtobufEncoderDecoder(BaseEncoderDecoder):
             "message_count": deserialized.message_count,
             "identifier": deserialized.identifier,
         }
-
-
