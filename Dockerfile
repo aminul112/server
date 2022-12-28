@@ -36,6 +36,7 @@ FROM python-base as production
 
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 
-COPY main.py /main.py
-COPY messages_pb2.py /messages_pb2.py
+COPY . /
+#COPY main.py /main.py
+#COPY messages_pb2.py /messages_pb2.py
 #CMD ["python", "./main.py"]
