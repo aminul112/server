@@ -151,6 +151,17 @@ tomli = {version = ">=1.0.0", markers = "python_version < \"3.11\""}
 testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "pygments (>=2.7.2)", "requests", "xmlschema"]
 
 [[package]]
+name = "python-dotenv"
+version = "0.21.0"
+description = "Read key-value pairs from a .env file and set them as environment variables"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+cli = ["click (>=5.0)"]
+
+[[package]]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
@@ -169,7 +180,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "baf33162d06023a0319c9e36b56c6031ac4484f8327eada69a5a4d18b07a3a5f"
+content-hash = "68ba1617b84a0715c548a97d9a32fe65fc6c7cfc3e785d5a11f2780ca8e625b0"
 
 [metadata.files]
 attrs = []
@@ -188,5 +199,6 @@ pluggy = [
 ]
 protobuf = []
 pytest = []
+python-dotenv = []
 tomli = []
 typing-extensions = []
