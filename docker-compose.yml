@@ -41,3 +41,8 @@ services:
     # we broadcast the server).
     ports:
       - 2991:2991
+
+    # Save log to host machine and share the file with docker container
+    # Log will be saved at the project_directory/log/server.log file
+    volumes:
+      - ./log:/log
