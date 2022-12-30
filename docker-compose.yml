@@ -7,6 +7,21 @@ version: "3"
 # For example, a service maybe, a server, a client, a database...
 # We use the keyword 'services' to start to create services.
 services:
+
+  database:
+    image: postgres:11.4-alpine
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: devpwd
+      POSTGRES_USER: devuser
+      POSTGRES_DB: devdb
+
+
+
+
   # As we said at the beginning, we want to create: a server and a client.
   # That is two services.
 
@@ -46,3 +61,10 @@ services:
     # Log will be saved at the project_directory/log/server.log file
     volumes:
       - ./log:/log
+    depends_on:
+      - database
+
+
+volumes:
+  data:
+
