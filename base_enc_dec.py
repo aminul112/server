@@ -3,11 +3,11 @@ from abc import ABC, abstractmethod
 
 class BaseEncoderDecoder(ABC):
     @abstractmethod
-    def encode_hello(self, msg_dict):
+    def encode_heartbeat(self, msg_dict):
         pass
 
     @abstractmethod
-    def decode_hello(self, binary_data):
+    def decode_heartbeat(self, binary_data):
         pass
 
     @abstractmethod

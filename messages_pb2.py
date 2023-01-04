@@ -19,50 +19,50 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x08my.proto\"g\n\x0cHelloMessage\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\x0b\n\x03msg\x18\x02 \x01(\t\x12\x13\n\x0b\x63lient_host\x18\x03 \x01(\t\x12\x13\n\x0b\x63lient_port\x18\x04 \x01(\r\x12\x12\n\nidentifier\x18\x05 \x01(\r\"H\n\rStatusMessage\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\x15\n\rmessage_count\x18\x02 \x01(\r\x12\x12\n\nidentifier\x18\x03 \x01(\rb\x06proto3'
+  serialized_pb=b'\n\x08my.proto\"k\n\x10HeartBeatMessage\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\x0b\n\x03msg\x18\x02 \x01(\t\x12\x13\n\x0b\x63lient_host\x18\x03 \x01(\t\x12\x13\n\x0b\x63lient_port\x18\x04 \x01(\r\x12\x12\n\nidentifier\x18\x05 \x01(\r\"H\n\rStatusMessage\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\x15\n\rmessage_count\x18\x02 \x01(\r\x12\x12\n\nidentifier\x18\x03 \x01(\r\"+\n\x0c\x45rrorMessage\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\r\n\x05\x65rror\x18\x02 \x01(\tb\x06proto3'
 )
 
 
 
 
-_HELLOMESSAGE = _descriptor.Descriptor(
-  name='HelloMessage',
-  full_name='HelloMessage',
+_HEARTBEATMESSAGE = _descriptor.Descriptor(
+  name='HeartBeatMessage',
+  full_name='HeartBeatMessage',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='type', full_name='HelloMessage.type', index=0,
+      name='type', full_name='HeartBeatMessage.type', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='msg', full_name='HelloMessage.msg', index=1,
+      name='msg', full_name='HeartBeatMessage.msg', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='client_host', full_name='HelloMessage.client_host', index=2,
+      name='client_host', full_name='HeartBeatMessage.client_host', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='client_port', full_name='HelloMessage.client_port', index=3,
+      name='client_port', full_name='HeartBeatMessage.client_port', index=3,
       number=4, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='identifier', full_name='HelloMessage.identifier', index=4,
+      name='identifier', full_name='HeartBeatMessage.identifier', index=4,
       number=5, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -81,7 +81,7 @@ _HELLOMESSAGE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=12,
-  serialized_end=115,
+  serialized_end=119,
 )
 
 
@@ -126,20 +126,60 @@ _STATUSMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=117,
-  serialized_end=189,
+  serialized_start=121,
+  serialized_end=193,
 )
 
-DESCRIPTOR.message_types_by_name['HelloMessage'] = _HELLOMESSAGE
+
+_ERRORMESSAGE = _descriptor.Descriptor(
+  name='ErrorMessage',
+  full_name='ErrorMessage',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='type', full_name='ErrorMessage.type', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='error', full_name='ErrorMessage.error', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=195,
+  serialized_end=238,
+)
+
+DESCRIPTOR.message_types_by_name['HeartBeatMessage'] = _HEARTBEATMESSAGE
 DESCRIPTOR.message_types_by_name['StatusMessage'] = _STATUSMESSAGE
+DESCRIPTOR.message_types_by_name['ErrorMessage'] = _ERRORMESSAGE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-HelloMessage = _reflection.GeneratedProtocolMessageType('HelloMessage', (_message.Message,), {
-  'DESCRIPTOR' : _HELLOMESSAGE,
+HeartBeatMessage = _reflection.GeneratedProtocolMessageType('HeartBeatMessage', (_message.Message,), {
+  'DESCRIPTOR' : _HEARTBEATMESSAGE,
   '__module__' : 'my_pb2'
-  # @@protoc_insertion_point(class_scope:HelloMessage)
+  # @@protoc_insertion_point(class_scope:HeartBeatMessage)
   })
-_sym_db.RegisterMessage(HelloMessage)
+_sym_db.RegisterMessage(HeartBeatMessage)
 
 StatusMessage = _reflection.GeneratedProtocolMessageType('StatusMessage', (_message.Message,), {
   'DESCRIPTOR' : _STATUSMESSAGE,
@@ -147,6 +187,13 @@ StatusMessage = _reflection.GeneratedProtocolMessageType('StatusMessage', (_mess
   # @@protoc_insertion_point(class_scope:StatusMessage)
   })
 _sym_db.RegisterMessage(StatusMessage)
+
+ErrorMessage = _reflection.GeneratedProtocolMessageType('ErrorMessage', (_message.Message,), {
+  'DESCRIPTOR' : _ERRORMESSAGE,
+  '__module__' : 'my_pb2'
+  # @@protoc_insertion_point(class_scope:ErrorMessage)
+  })
+_sym_db.RegisterMessage(ErrorMessage)
 
 
 # @@protoc_insertion_point(module_scope)

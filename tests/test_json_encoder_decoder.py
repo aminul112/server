@@ -18,7 +18,7 @@ class JsonBufEncodeDecodeTestCase(TestCase):
                     }
         # JSON encode/decode functions are not implemented yet and expect NotImplementedError raise
         with pytest.raises(NotImplementedError):
-            encoder_decoder.encode_hello(msg_dict)
+            encoder_decoder.encode_heartbeat(msg_dict)
 
     def test_encode_status_message(self):
         encoder_decoder = EncodeDecodeExecutor(self.json_buffer_enc_dec)

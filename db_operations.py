@@ -44,7 +44,7 @@ async def update_client_list_to_db(updated_clients_mapping):
     conn = None
     log = logging.getLogger("server_log")
     try:
-        log.info("update_client_list_to_db()")
+        log.info("update_client_list_to_db")
         conn = await asyncpg.connect(user='devuser', password='devpwd',
                                      database='devdb', host='0.0.0.0', port=5432)
 

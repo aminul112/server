@@ -6,11 +6,11 @@ log = logging.getLogger(__name__)
 
 
 class JsonEncoderDecoder(BaseEncoderDecoder):
-    def encode_hello(self, msg_dict):
-        raise NotImplementedError("JSON encode_hello will be implemented in future")
+    def encode_heartbeat(self, msg_dict):
+        raise NotImplementedError("JSON encode_heartbeat will be implemented in future")
 
-    def decode_hello(self, binary_data):
-        raise NotImplementedError("JSON decode_hello will be implemented in future")
+    def decode_heartbeat(self, binary_data):
+        raise NotImplementedError("JSON decode_heartbeat will be implemented in future")
 
     def encode_status(self, msg_dict):
         raise NotImplementedError("JSON encode_status will be implemented in future")
