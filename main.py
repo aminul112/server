@@ -1,16 +1,57 @@
-# This is a sample Python script.
+import asyncio
+import logging
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+from db_operations import AsyncPgPostgresManager
+from encode_decode_executor import EncodeDecodeExecutor
+from protobuf_encode_decoder import ProtobufEncoderDecoder
+
+from dotenv import load_dotenv
+import os
+
+from server import Server
+
+load_dotenv()
+
+log = logging.getLogger("server_log")
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+def main():
+    loop = asyncio.get_event_loop()
+    db_op_manager = AsyncPgPostgresManager(log=log)
+
+    encoder_decoder = EncodeDecodeExecutor(ProtobufEncoderDecoder())
+    server = Server(encoder_decoder=encoder_decoder, db_op_manager=db_op_manager)
+
+    server_ip = os.getenv("SERVER_IP")
+    server_port = os.getenv("SERVER_PORT")
+
+    if not (server_ip and server_port):
+        log.error(".env file must have valid SERVER_IP and SERVER_PORT defined")
+        return
+
+    log.info(f"server ip is {server_ip} port is {server_port}")
+
+    f1 = asyncio.start_server(server.accept_client, server_ip, server_port)
+    f2 = asyncio.ensure_future(server.send_status_request_to_clients())
+
+    loop.run_until_complete(db_op_manager.query_saved_clients_from_db())
+
+    loop.run_until_complete(f1)
+    loop.run_until_complete(f2)
+    loop.run_forever()
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+if __name__ == "__main__":
+    logging.basicConfig(filename='log/server.log', encoding='utf-8', level=logging.DEBUG)
+    formatter = logging.Formatter(
+        "%(asctime)s %(levelname)s " + "[%(module)s:%(lineno)d] %(message)s"
+    )
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    # setup console logging
+    log.setLevel(logging.DEBUG)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+
+    ch.setFormatter(formatter)
+    log.addHandler(ch)
+    main()
