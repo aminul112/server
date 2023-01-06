@@ -1,5 +1,3 @@
-
-
 class EncodeDecodeExecutor:
     def __init__(self, executor):
         self.executor = executor
@@ -15,4 +13,3 @@ class EncodeDecodeExecutor:
 
     def decode_status(self, binary_data):
         return self.executor.decode_status(binary_data)
-

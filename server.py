@@ -13,11 +13,17 @@ active_clients = {}
 
 
 class Server:
-    def __init__(self, encoder_decoder: EncodeDecodeExecutor, db_op_manager: AsyncPgPostgresManager):
+    def __init__(
+        self,
+        encoder_decoder: EncodeDecodeExecutor,
+        db_op_manager: AsyncPgPostgresManager,
+    ):
         self.encoder_decoder = encoder_decoder
         self.db_op_manager = db_op_manager
 
-    def accept_client(self, client_reader: asyncio.StreamReader, client_writer: asyncio.StreamWriter):
+    def accept_client(
+        self, client_reader: asyncio.StreamReader, client_writer: asyncio.StreamWriter
+    ):
         task = asyncio.Task(self.handle_client(client_reader, client_writer))
         clients[task] = (client_reader, client_writer)
 
@@ -70,12 +76,11 @@ class Server:
                 host = active_clients[client_id].get("client_host")
                 port = active_clients[client_id].get("client_port")
 
-                msg = {"type": "status",
-                       "message_count": 0,
-                       "identifier": client_id
-                       }
+                msg = {"type": "status", "message_count": 0, "identifier": client_id}
 
-                client_status, count = await self.send_a_message_to_client(host, port, msg)
+                client_status, count = await self.send_a_message_to_client(
+                    host, port, msg
+                )
                 if client_status:
                     updated_clients_mapping[client_id] = {
                         "client_identifier": client_id,
@@ -86,7 +91,8 @@ class Server:
                     }
                 log.info(
                     f"Client status for {host}, {port} is {client_status} after status check, map is "
-                    f"{updated_clients_mapping}")
+                    f"{updated_clients_mapping}"
+                )
 
             for client in clients_from_db:
                 log.info(client)
@@ -94,11 +100,10 @@ class Server:
                 port = client.get("client_port")
                 client_id = client.get("client_identifier")
                 log.info(f"from db: {host}{port}{client_id}")
-                msg = {"type": "status",
-                       "message_count": 0,
-                       "identifier": client_id
-                       }
-                client_status, count = await self.send_a_message_to_client(host, port, msg)
+                msg = {"type": "status", "message_count": 0, "identifier": client_id}
+                client_status, count = await self.send_a_message_to_client(
+                    host, port, msg
+                )
                 if client_status:
                     updated_clients_mapping[client_id] = {
                         "client_identifier": client_id,
@@ -109,12 +114,15 @@ class Server:
                     }
                     if count != client.get("status_count"):
                         log.warning(
-                            f"Status count for client id {client_id} is different from database and actual from client")
+                            f"Status count for client id {client_id} is different from database and actual from client"
+                        )
             log.info(f"updated_clients_mapping is {updated_clients_mapping}")
             await self.db_op_manager.update_client_list_to_db(updated_clients_mapping)
             await asyncio.sleep(random.randint(30, 35))
 
-    async def handle_client(self, client_reader: asyncio.StreamReader, client_writer: asyncio.StreamWriter):
+    async def handle_client(
+        self, client_reader: asyncio.StreamReader, client_writer: asyncio.StreamWriter
+    ):
         data = await client_reader.read(1024)
         if not data:
             raise Exception("socket closed")

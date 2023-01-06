@@ -4,6 +4,7 @@ import asyncpg
 
 log = logging.getLogger("server_log")
 
+
 class AsyncPgPostgresManager:
     def __init__(self, user, password, database_name, db_host, db_port):
         self.user = user
@@ -16,11 +17,17 @@ class AsyncPgPostgresManager:
         conn = None
         try:
             log.info("query_saved_clients_from_db()")
-            conn = await asyncpg.connect(user=self.user, password=self.password,
-                                         database=self.database, host=self.host, port=self.port)
+            conn = await asyncpg.connect(
+                user=self.user,
+                password=self.password,
+                database=self.database,
+                host=self.host,
+                port=self.port,
+            )
 
             # Execute a statement to create a new table if necessary
-            await conn.execute('''
+            await conn.execute(
+                """
                CREATE TABLE IF NOT EXISTS client_record (
                  client_identifier INTEGER NOT NULL,
                  status_count INTEGER,
@@ -30,11 +37,13 @@ class AsyncPgPostgresManager:
                  client_port INTEGER NOT NULL,
                  connection_time  TIMESTAMP NOT NULL DEFAULT NOW()
                  )
-           ''')
+           """
+            )
 
             # get all active clients
             rows = await conn.fetch(
-                'SELECT * FROM client_record WHERE is_connected = $1', True)
+                "SELECT * FROM client_record WHERE is_connected = $1", True
+            )
 
             active_clients = [dict(row) for row in rows]
 
@@ -52,22 +61,38 @@ class AsyncPgPostgresManager:
 
         try:
             log.info("update_client_list_to_db")
-            conn = await asyncpg.connect(user=self.user, password=self.password,
-                                         database=self.database, host=self.host, port=self.port)
+            conn = await asyncpg.connect(
+                user=self.user,
+                password=self.password,
+                database=self.database,
+                host=self.host,
+                port=self.port,
+            )
 
             async with conn.transaction():
 
-                await conn.execute('''
+                await conn.execute(
+                    """
                                TRUNCATE client_record
-                           ''')
+                           """
+                )
 
                 for client_id in updated_clients_mapping:
                     host = updated_clients_mapping[client_id].get("client_host")
                     port = updated_clients_mapping[client_id].get("client_port")
-                    status_count = updated_clients_mapping[client_id].get("status_count")
-                    await conn.execute('''
+                    status_count = updated_clients_mapping[client_id].get(
+                        "status_count"
+                    )
+                    await conn.execute(
+                        """
                        INSERT INTO client_record(client_identifier, is_connected, client_host, client_port, status_count) VALUES($1, $2, $3, $4, $5)
-                   ''', client_id, True, host, port, status_count)
+                   """,
+                        client_id,
+                        True,
+                        host,
+                        port,
+                        status_count,
+                    )
 
             await conn.close()
         except Exception as e:
