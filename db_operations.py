@@ -1,17 +1,23 @@
+import logging
 
 import asyncpg
 
+log = logging.getLogger("server_log")
 
 class AsyncPgPostgresManager:
-    def __init__(self, log):
-        self.log = log
+    def __init__(self, user, password, database_name, db_host, db_port):
+        self.user = user
+        self.password = password
+        self.database = database_name
+        self.host = db_host
+        self.port = db_port
 
     async def query_saved_clients_from_db(self):
-        conn = None        
+        conn = None
         try:
-            self.log.info("query_saved_clients_from_db()")
-            conn = await asyncpg.connect(user='devuser', password='devpwd',
-                                         database='devdb', host='0.0.0.0', port=5432)
+            log.info("query_saved_clients_from_db()")
+            conn = await asyncpg.connect(user=self.user, password=self.password,
+                                         database=self.database, host=self.host, port=self.port)
 
             # Execute a statement to create a new table if necessary
             await conn.execute('''
@@ -38,16 +44,16 @@ class AsyncPgPostgresManager:
         except Exception as e:
             if conn:
                 await conn.close()
-            self.log.error(f"Database exception happened {e}")
+            log.error(f"Database exception happened {e}")
             return []
 
     async def update_client_list_to_db(self, updated_clients_mapping):
         conn = None
-        
+
         try:
-            self.log.info("update_client_list_to_db")
-            conn = await asyncpg.connect(user='devuser', password='devpwd',
-                                         database='devdb', host='0.0.0.0', port=5432)
+            log.info("update_client_list_to_db")
+            conn = await asyncpg.connect(user=self.user, password=self.password,
+                                         database=self.database, host=self.host, port=self.port)
 
             async with conn.transaction():
 
@@ -67,5 +73,5 @@ class AsyncPgPostgresManager:
         except Exception as e:
             if conn:
                 await conn.close()
-            self.log.error(f"Database exception happened {e}")
+            log.error(f"Database exception happened {e}")
             return []

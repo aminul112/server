@@ -17,7 +17,14 @@ log = logging.getLogger("server_log")
 
 def main():
     loop = asyncio.get_event_loop()
-    db_op_manager = AsyncPgPostgresManager(log=log)
+    db_host = os.getenv("DB_HOST","0.0.0.0")
+    db_user = os.getenv("POSTGRES_USER","devuser")
+    password = os.getenv("POSTGRES_PASSWORD","devpwd")
+    db_name = os.getenv("POSTGRES_DB","devdb")
+    db_port = os.getenv("DB_PORT", 5432)
+
+
+    db_op_manager = AsyncPgPostgresManager(user=db_user, password=password, database_name=db_name, db_host=db_host, db_port=db_port)
 
     encoder_decoder = EncodeDecodeExecutor(ProtobufEncoderDecoder())
     server = Server(encoder_decoder=encoder_decoder, db_op_manager=db_op_manager)
