@@ -58,8 +58,20 @@ class Server:
 
             log.info(f"deserialized_dict STATUS COUNT is  from {deserialized_dict}")
 
+
+            # send ACK to client
+            msg = {
+                "type": "heartbeat",
+                "msg": "ACK",
+                "client_host": host,
+                "client_port": port,
+                "identifier": deserialized_dict.get("identifier"),
+            }
+            serialized_bnr = self.encoder_decoder.encode_heartbeat(msg_dict=msg)
+            client_writer.write(serialized_bnr)
+            await client_writer.drain()
+
             client_writer.close()
-            # log.info(f"Disconnected from {host}{port}")
             return True, deserialized_dict.get("message_count", 0)
         except (ConnectionError, OSError) as e:
             log.error(f"Connection error while sending status request to client{e}")
@@ -72,6 +84,8 @@ class Server:
             clients_from_db = await self.db_op_manager.query_saved_clients_from_db()
             log.info(f"clients_from_db =  {clients_from_db}")
             updated_clients_mapping = {}
+
+            # send message to all saved clients in the cache
             for client_id in active_clients:
                 host = active_clients[client_id].get("client_host")
                 port = active_clients[client_id].get("client_port")
@@ -94,13 +108,14 @@ class Server:
                     f"{updated_clients_mapping}"
                 )
 
+            # send message to all saved clients from the database
             for client in clients_from_db:
                 log.info(client)
                 host = client.get("client_host").strip()
                 port = client.get("client_port")
                 client_id = client.get("client_identifier")
                 log.info(f"from db: {host}{port}{client_id}")
-                msg = {"type": "status", "message_count": 0, "identifier": client_id}
+                msg = {"type": "status", "message_count": client.get("status_count", 0), "identifier": client_id}
                 client_status, count = await self.send_a_message_to_client(
                     host, port, msg
                 )
@@ -127,11 +142,11 @@ class Server:
         if not data:
             raise Exception("socket closed")
 
-        log.info(f"handle_client:************received data is is {data}")
+        log.info(f"handle_client:")
 
         deserialized_dict = self.encoder_decoder.decode_heartbeat(binary_data=data)
 
-        log.info(f"Received {deserialized_dict}")
+        log.info(f"Received deserialized data is {deserialized_dict}")
 
         if deserialized_dict.get("type") == "heartbeat":
             client_identifier = deserialized_dict.get("identifier")
@@ -145,6 +160,9 @@ class Server:
                 "client_port": client_port,
             }
             log.info(f"active_clients is {active_clients}")
+        else:
+            # do nothing as we are only expecting heartbeat message
+            pass
         deserialized_dict["type"] = "heartbeat"
         deserialized_dict["msg"] = "ACK"
         binary_data = self.encoder_decoder.encode_heartbeat(deserialized_dict)
