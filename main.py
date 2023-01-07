@@ -12,7 +12,7 @@ from server import Server
 
 load_dotenv()
 
-log = logging.getLogger("server_log")
+log = logging.getLogger()
 
 
 def main():

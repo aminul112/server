@@ -2,7 +2,7 @@ import logging
 
 from base_enc_dec import BaseEncoderDecoder
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('__main__.' + __name__)
 
 
 class JsonEncoderDecoder(BaseEncoderDecoder):

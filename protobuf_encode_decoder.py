@@ -3,7 +3,7 @@ import logging
 from base_enc_dec import BaseEncoderDecoder
 import messages_pb2 as messages
 
-log = logging.getLogger("server_log")
+log = logging.getLogger('__main__.' + __name__)
 
 
 class ProtobufEncoderDecoder(BaseEncoderDecoder):

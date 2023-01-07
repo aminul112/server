@@ -6,7 +6,7 @@ from db_operations import AsyncPgPostgresManager
 from encode_decode_executor import EncodeDecodeExecutor
 
 
-log = logging.getLogger("server_log")
+log = logging.getLogger('__main__.' + __name__)
 
 clients = {}
 active_clients = {}
