@@ -36,6 +36,8 @@ def main():
         db_host=db_host,
         db_port=db_port,
     )
+    server_ip = os.getenv("SERVER_IP", "0.0.0.0")
+    server_port = int(os.getenv("SERVER_PORT", 4000))
 
     encoder_decoder = EncodeDecodeExecutor(ProtobufEncoderDecoder())
     server = Server(
@@ -43,14 +45,14 @@ def main():
         db_op_manager=db_op_manager,
         query_seconds_interval_lower=query_seconds_interval_lower,
         query_seconds_interval_upper=query_seconds_interval_upper,
+        server_ip=server_ip,
+        server_port=server_port,
     )
-
-    server_ip = os.getenv("SERVER_IP", "0.0.0.0")
-    server_port = int(os.getenv("SERVER_PORT", 4000))
 
     log.info(f"server ip is {server_ip} port is {server_port}")
 
-    f1 = asyncio.start_server(server.accept_client, server_ip, server_port)
+    # start Async server to handle client requests.
+    f1 = server.start_server()
     f2 = asyncio.ensure_future(server.send_status_request_to_clients())
 
     loop.run_until_complete(db_op_manager.query_saved_clients_from_db())

@@ -15,6 +15,8 @@ class Server:
         db_op_manager: AsyncPgPostgresManager,
         query_seconds_interval_lower: int,
         query_seconds_interval_upper: int,
+        server_ip: str,
+        server_port: int,
     ):
         self.encoder_decoder = encoder_decoder
         self.db_op_manager = db_op_manager
@@ -22,6 +24,18 @@ class Server:
         self.query_seconds_interval_upper = query_seconds_interval_upper
         self.clients = {}  # to handle multiple clients
         self.active_clients_in_cache = {}  # save all client information
+        self.server_ip = server_ip
+        self.server_port = server_port
+
+    async def start_server(self):
+        """
+        Wrapper function of asyncio.start_server. This method starts a server to handle status message
+        request from the client.
+
+        :return: return a coroutine
+        """
+        await asyncio.start_server(self.accept_client, self.server_ip, self.server_port)
+
 
     def accept_client(
         self, client_reader: asyncio.StreamReader, client_writer: asyncio.StreamWriter
