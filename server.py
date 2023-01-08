@@ -17,6 +17,7 @@ class Server:
         query_seconds_interval_upper: int,
         server_ip: str,
         server_port: int,
+        loop=None,
     ):
         self.encoder_decoder = encoder_decoder
         self.db_op_manager = db_op_manager
@@ -26,6 +27,7 @@ class Server:
         self.active_clients_in_cache = {}  # save all client information
         self.server_ip = server_ip
         self.server_port = server_port
+        self.loop = loop
 
     async def start_server(self):
         """
@@ -34,8 +36,15 @@ class Server:
 
         :return: return a coroutine
         """
-        await asyncio.start_server(self.accept_client, self.server_ip, self.server_port)
-
+        if self.loop:
+            # Testing case
+            await asyncio.start_server(
+                self.accept_client, self.server_ip, self.server_port, loop=self.loop
+            )
+        else:
+            await asyncio.start_server(
+                self.accept_client, self.server_ip, self.server_port
+            )
 
     def accept_client(
         self, client_reader: asyncio.StreamReader, client_writer: asyncio.StreamWriter
@@ -45,6 +54,7 @@ class Server:
         :param client_reader: StreamReader object to read data from client.
         :param client_writer: StreamWriter object to write data to client.
         """
+        print("accept_client..................")
         task = asyncio.Task(self.handle_client(client_reader, client_writer))
         self.clients[task] = (client_reader, client_writer)
 
