@@ -2,7 +2,7 @@ import logging
 
 import asyncpg
 
-log = logging.getLogger('__main__.' + __name__)
+log = logging.getLogger("__main__." + __name__)
 
 
 class AsyncPgPostgresManager:

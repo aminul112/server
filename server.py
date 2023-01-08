@@ -5,16 +5,16 @@ import random
 from db_operations import AsyncPgPostgresManager
 from encode_decode_executor import EncodeDecodeExecutor
 
-log = logging.getLogger('__main__.' + __name__)
+log = logging.getLogger("__main__." + __name__)
 
 
 class Server:
     def __init__(
-            self,
-            encoder_decoder: EncodeDecodeExecutor,
-            db_op_manager: AsyncPgPostgresManager,
-            query_seconds_interval_lower: int,
-            query_seconds_interval_upper: int,
+        self,
+        encoder_decoder: EncodeDecodeExecutor,
+        db_op_manager: AsyncPgPostgresManager,
+        query_seconds_interval_lower: int,
+        query_seconds_interval_upper: int,
     ):
         self.encoder_decoder = encoder_decoder
         self.db_op_manager = db_op_manager
@@ -24,7 +24,7 @@ class Server:
         self.active_clients_in_cache = {}  # save all client information
 
     def accept_client(
-            self, client_reader: asyncio.StreamReader, client_writer: asyncio.StreamWriter
+        self, client_reader: asyncio.StreamReader, client_writer: asyncio.StreamWriter
     ) -> None:
         """
         This is callback function for start_server() function of asyncio.
@@ -42,7 +42,9 @@ class Server:
         log.info("client connected")
         task.add_done_callback(client_disconnected)
 
-    async def send_a_message_to_client(self, host: str, port: int, msg: dict) -> (bool, int):
+    async def send_a_message_to_client(
+        self, host: str, port: int, msg: dict
+    ) -> (bool, int):
         """
         This method sends a message to a given client and try to get message count from the client.
 
@@ -99,7 +101,9 @@ class Server:
         Then it updates the database with the latest information from the clients.
         """
         while True:
-            log.info(f"send_status_request_to_clients.........{self.active_clients_in_cache}")
+            log.info(
+                f"send_status_request_to_clients.........{self.active_clients_in_cache}"
+            )
             clients_from_db = await self.db_op_manager.query_saved_clients_from_db()
             log.info(f"clients_from_db =  {clients_from_db}")
             updated_clients_mapping = {}
@@ -137,7 +141,11 @@ class Server:
                 log.info(f"from db: {host}{port}{client_id}")
                 # avoid sending duplicate message to client_id existing in cache and database
                 if client_id not in updated_clients_mapping:
-                    msg = {"type": "status", "message_count": existing_status_count, "identifier": client_id}
+                    msg = {
+                        "type": "status",
+                        "message_count": existing_status_count,
+                        "identifier": client_id,
+                    }
                     client_status, count = await self.send_a_message_to_client(
                         host, port, msg
                     )
@@ -156,17 +164,23 @@ class Server:
                             )
                 else:
                     # this client is already communicated from active_clients_in_cache cache info
-                    if existing_status_count != updated_clients_mapping[client_id].get("status_count"):
+                    if existing_status_count != updated_clients_mapping[client_id].get(
+                        "status_count"
+                    ):
                         log.error(
                             f"Status count for client id {client_id} is different from database and actual from client"
                         )
 
                 log.info(f"updated_clients_mapping is {updated_clients_mapping}")
             await self.db_op_manager.update_client_list_to_db(updated_clients_mapping)
-            await asyncio.sleep(random.randint(self.query_seconds_interval_lower, self.query_seconds_interval_upper))
+            await asyncio.sleep(
+                random.randint(
+                    self.query_seconds_interval_lower, self.query_seconds_interval_upper
+                )
+            )
 
     async def handle_client(
-            self, client_reader: asyncio.StreamReader, client_writer: asyncio.StreamWriter
+        self, client_reader: asyncio.StreamReader, client_writer: asyncio.StreamWriter
     ) -> None:
         """
         To serve connectivity request from a client.

@@ -22,8 +22,12 @@ def main():
     password = os.getenv("POSTGRES_PASSWORD", "devpwd")
     db_name = os.getenv("POSTGRES_DB", "devdb")
     db_port = int(os.getenv("DB_PORT", 5432))
-    query_seconds_interval_lower = int(os.getenv("QUERY_CLIENTS_INTERVAL_SECONDS_LOWER", 10))
-    query_seconds_interval_upper = int(os.getenv("QUERY_CLIENTS_INTERVAL_SECONDS_UPPER", 30))
+    query_seconds_interval_lower = int(
+        os.getenv("QUERY_CLIENTS_INTERVAL_SECONDS_LOWER", 10)
+    )
+    query_seconds_interval_upper = int(
+        os.getenv("QUERY_CLIENTS_INTERVAL_SECONDS_UPPER", 30)
+    )
 
     db_op_manager = AsyncPgPostgresManager(
         user=db_user,
@@ -34,9 +38,12 @@ def main():
     )
 
     encoder_decoder = EncodeDecodeExecutor(ProtobufEncoderDecoder())
-    server = Server(encoder_decoder=encoder_decoder, db_op_manager=db_op_manager,
-                    query_seconds_interval_lower=query_seconds_interval_lower,
-                    query_seconds_interval_upper=query_seconds_interval_upper)
+    server = Server(
+        encoder_decoder=encoder_decoder,
+        db_op_manager=db_op_manager,
+        query_seconds_interval_lower=query_seconds_interval_lower,
+        query_seconds_interval_upper=query_seconds_interval_upper,
+    )
 
     server_ip = os.getenv("SERVER_IP", "0.0.0.0")
     server_port = int(os.getenv("SERVER_PORT", 4000))

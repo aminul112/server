@@ -3,11 +3,11 @@ import logging
 from base_enc_dec import BaseEncoderDecoder
 import messages_pb2 as messages
 
-log = logging.getLogger('__main__.' + __name__)
+log = logging.getLogger("__main__." + __name__)
 
 
 class ProtobufEncoderDecoder(BaseEncoderDecoder):
-    def encode_heartbeat(self, msg_dict: dict)-> bytes:
+    def encode_heartbeat(self, msg_dict: dict) -> bytes:
         """
         Serialize a heartbeat message.
         :param msg_dict: the data to serialize
