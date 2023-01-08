@@ -13,7 +13,11 @@ class AsyncPgPostgresManager:
         self.host = db_host
         self.port = db_port
 
-    async def query_saved_clients_from_db(self):
+    async def query_saved_clients_from_db(self) -> list[dict]:
+        """
+        This function retrieves all active clients from the database.
+        :return: a list of all active clients
+        """
         conn = None
         try:
             log.info("query_saved_clients_from_db()")
@@ -56,7 +60,13 @@ class AsyncPgPostgresManager:
             log.error(f"Database exception happened {e}")
             return []
 
-    async def update_client_list_to_db(self, updated_clients_mapping):
+    async def update_client_list_to_db(self, updated_clients_mapping: dict) -> None:
+        """
+        This method updates clients information to the database.
+
+        :param updated_clients_mapping: a dictionary of all active clients information.
+        :return:
+        """
         conn = None
 
         try:
@@ -69,6 +79,7 @@ class AsyncPgPostgresManager:
                 port=self.port,
             )
 
+            # better to use a transaction since we are removing everything and saving fresh clients information
             async with conn.transaction():
 
                 await conn.execute(
@@ -85,7 +96,8 @@ class AsyncPgPostgresManager:
                     )
                     await conn.execute(
                         """
-                       INSERT INTO client_record(client_identifier, is_connected, client_host, client_port, status_count) VALUES($1, $2, $3, $4, $5)
+                       INSERT INTO client_record(client_identifier, is_connected, client_host, client_port, 
+                       status_count) VALUES($1, $2, $3, $4, $5)
                    """,
                         client_id,
                         True,
@@ -99,4 +111,3 @@ class AsyncPgPostgresManager:
             if conn:
                 await conn.close()
             log.error(f"Database exception happened {e}")
-            return []

@@ -7,7 +7,12 @@ log = logging.getLogger('__main__.' + __name__)
 
 
 class ProtobufEncoderDecoder(BaseEncoderDecoder):
-    def encode_heartbeat(self, msg_dict):
+    def encode_heartbeat(self, msg_dict: dict)-> bytes:
+        """
+        Serialize a heartbeat message.
+        :param msg_dict: the data to serialize
+        :return: binary string format data.
+        """
         try:
             proto_message = messages.HeartBeatMessage()
             proto_message.type = msg_dict.get("type")
@@ -24,6 +29,11 @@ class ProtobufEncoderDecoder(BaseEncoderDecoder):
             return proto_message.SerializeToString()  # serialize
 
     def decode_heartbeat(self, binary_data):
+        """
+        Deserialize binary data for a heartbeat message.
+        :param binary_data: the data to deserialize.
+        :return: a decoded dict format message.
+        """
         proto_message = messages.HeartBeatMessage()
         deserialized = proto_message.FromString(
             binary_data
@@ -40,7 +50,12 @@ class ProtobufEncoderDecoder(BaseEncoderDecoder):
             log.error(f"decode_heartbeat exception happened")
             return {"type": "error", "msg": "incorrect decoder"}
 
-    def encode_status(self, msg_dict):
+    def encode_status(self, msg_dict: dict) -> bytes:
+        """
+        Serialize a status message.
+        :param msg_dict: the data to serialize
+        :return: binary string format data.
+        """
         try:
             proto_message = messages.StatusMessage()
             proto_message.type = msg_dict.get("type")
@@ -54,7 +69,12 @@ class ProtobufEncoderDecoder(BaseEncoderDecoder):
             proto_message.error = str(e)
             return proto_message.SerializeToString()  # serialize
 
-    def decode_status(self, binary_data):
+    def decode_status(self, binary_data: bytes) -> dict:
+        """
+        Deserialize binary data for a status message.
+        :param binary_data: the data to deserialize.
+        :return: a decoded dict format message.
+        """
         proto_message = messages.StatusMessage()
         deserialized = proto_message.FromString(
             binary_data

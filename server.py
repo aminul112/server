@@ -5,28 +5,32 @@ import random
 from db_operations import AsyncPgPostgresManager
 from encode_decode_executor import EncodeDecodeExecutor
 
-
 log = logging.getLogger('__main__.' + __name__)
 
 
 class Server:
     def __init__(
-        self,
-        encoder_decoder: EncodeDecodeExecutor,
-        db_op_manager: AsyncPgPostgresManager,
-        query_seconds_interval_lower: int,
-        query_seconds_interval_upper: int,
+            self,
+            encoder_decoder: EncodeDecodeExecutor,
+            db_op_manager: AsyncPgPostgresManager,
+            query_seconds_interval_lower: int,
+            query_seconds_interval_upper: int,
     ):
         self.encoder_decoder = encoder_decoder
         self.db_op_manager = db_op_manager
         self.query_seconds_interval_lower = query_seconds_interval_lower
         self.query_seconds_interval_upper = query_seconds_interval_upper
-        self.clients = {}
-        self.active_clients_in_cache = {}
+        self.clients = {}  # to handle multiple clients
+        self.active_clients_in_cache = {}  # save all client information
 
     def accept_client(
-        self, client_reader: asyncio.StreamReader, client_writer: asyncio.StreamWriter
-    ):
+            self, client_reader: asyncio.StreamReader, client_writer: asyncio.StreamWriter
+    ) -> None:
+        """
+        This is callback function for start_server() function of asyncio.
+        :param client_reader: StreamReader object to read data from client.
+        :param client_writer: StreamWriter object to write data to client.
+        """
         task = asyncio.Task(self.handle_client(client_reader, client_writer))
         self.clients[task] = (client_reader, client_writer)
 
@@ -38,7 +42,15 @@ class Server:
         log.info("client connected")
         task.add_done_callback(client_disconnected)
 
-    async def send_a_message_to_client(self, host: str, port: int, msg: dict):
+    async def send_a_message_to_client(self, host: str, port: int, msg: dict) -> (bool, int):
+        """
+        This method sends a message to a given client and try to get message count from the client.
+
+        :param host: client's host address.
+        :param port: client's port number
+        :param msg: message to send
+        :return: status of client as True or False and heartbeat message count from this client.
+        """
         try:
             log.info(f"send_a_message_to_client host{host} port{port} ")
 
@@ -60,7 +72,6 @@ class Server:
 
             log.info(f"deserialized_dict STATUS COUNT is  from {deserialized_dict}")
 
-
             # send 'ack' to client
             msg = {
                 "type": "heartbeat",
@@ -79,8 +90,14 @@ class Server:
             log.error(f"Connection error while sending status request to client{e}")
             return False, 0
 
-    async def send_status_request_to_clients(self):
-        """Run func every interval seconds."""
+    async def send_status_request_to_clients(self) -> None:
+        """
+        This method runs an infinite loop and send status message
+        to all active clients in the cache and saved in the database.
+        The interval is determined randomly between 2 configured values saved in self.query_seconds_interval_lower and
+        self.query_seconds_interval_upper
+        Then it updates the database with the latest information from the clients.
+        """
         while True:
             log.info(f"send_status_request_to_clients.........{self.active_clients_in_cache}")
             clients_from_db = await self.db_op_manager.query_saved_clients_from_db()
@@ -134,7 +151,8 @@ class Server:
                         }
                         if count != existing_status_count:
                             log.error(
-                                f"Status count for client id {client_id} is different from database and actual from client"
+                                f"Status count for client id {client_id} is different from database and actual from "
+                                f"client "
                             )
                 else:
                     # this client is already communicated from active_clients_in_cache cache info
@@ -148,13 +166,18 @@ class Server:
             await asyncio.sleep(random.randint(self.query_seconds_interval_lower, self.query_seconds_interval_upper))
 
     async def handle_client(
-        self, client_reader: asyncio.StreamReader, client_writer: asyncio.StreamWriter
-    ):
+            self, client_reader: asyncio.StreamReader, client_writer: asyncio.StreamWriter
+    ) -> None:
+        """
+        To serve connectivity request from a client.
+        :param client_reader: StreamReader object to read data from client.
+        :param client_writer: StreamWriter object to write data to client.
+        """
         data = await client_reader.read(1024)
         if not data:
             raise Exception("socket closed")
 
-        log.info(f"handle_client:")
+        log.info(f"handle_client: got a new connection request")
 
         deserialized_dict = self.encoder_decoder.decode_heartbeat(binary_data=data)
 
@@ -174,7 +197,8 @@ class Server:
             }
             log.info(f"active_clients_in_cache is {self.active_clients_in_cache}")
         else:
-            # do nothing as we are only expecting heartbeat message
+            # do nothing as we are only expecting heartbeat message. So far we do not expect any other
+            # message here. In the future, we might support other message types
             pass
         deserialized_dict["type"] = "heartbeat"
         deserialized_dict["msg"] = "ack"
