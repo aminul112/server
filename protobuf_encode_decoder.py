@@ -24,7 +24,7 @@ class ProtobufEncoderDecoder(BaseEncoderDecoder):
         except TypeError as e:
             log.error(f"encode_heartbeat exception happened")
             proto_message = messages.ErrorMessage()
-            proto_message.type = "error"
+            proto_message.type = messages.MessageType.MESSAGE_TYPE_ERROR
             proto_message.error = str(e)
             return proto_message.SerializeToString()  # serialize
 
@@ -38,7 +38,7 @@ class ProtobufEncoderDecoder(BaseEncoderDecoder):
         deserialized = proto_message.FromString(
             binary_data
         )  # deserialize, input will be bytes
-        if deserialized.type == "heartbeat":
+        if deserialized.type == messages.MessageType.MESSAGE_TYPE_HEARTBEAT:
             return {
                 "type": deserialized.type,
                 "msg": deserialized.msg,
@@ -48,7 +48,10 @@ class ProtobufEncoderDecoder(BaseEncoderDecoder):
             }
         else:
             log.error(f"decode_heartbeat exception happened")
-            return {"type": "error", "msg": "incorrect decoder"}
+            return {
+                "type": messages.MessageType.MESSAGE_TYPE_ERROR,
+                "msg": "incorrect decoder",
+            }
 
     def encode_status(self, msg_dict: dict) -> bytes:
         """
@@ -65,7 +68,7 @@ class ProtobufEncoderDecoder(BaseEncoderDecoder):
         except TypeError as e:
             log.error(f"encode_status exception happened")
             proto_message = messages.ErrorMessage()
-            proto_message.type = "error"
+            proto_message.type = messages.MessageType.MESSAGE_TYPE_ERROR
             proto_message.error = str(e)
             return proto_message.SerializeToString()  # serialize
 
@@ -79,7 +82,7 @@ class ProtobufEncoderDecoder(BaseEncoderDecoder):
         deserialized = proto_message.FromString(
             binary_data
         )  # deserialize, input will be bytes
-        if deserialized.type == "status":
+        if deserialized.type == messages.MessageType.MESSAGE_TYPE_STATUS:
             return {
                 "type": deserialized.type,
                 "message_count": deserialized.message_count,
@@ -87,4 +90,7 @@ class ProtobufEncoderDecoder(BaseEncoderDecoder):
             }
         else:
             log.error(f"decode_status exception happened")
-            return {"type": "error", "msg": "incorrect decoder"}
+            return {
+                "type": messages.MessageType.MESSAGE_TYPE_ERROR,
+                "msg": "incorrect decoder",
+            }

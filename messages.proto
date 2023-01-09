@@ -1,8 +1,14 @@
 syntax = "proto3";
 
+enum MessageType {
+  MESSAGE_TYPE_HEARTBEAT = 0;
+  MESSAGE_TYPE_STATUS = 1;
+  MESSAGE_TYPE_ERROR = 3;
+}
+
 
 message HeartBeatMessage{
-  string type =1;
+  MessageType type =1;
   string msg = 2;
   string client_host =3;
   uint32 client_port=4;
@@ -10,12 +16,12 @@ message HeartBeatMessage{
 }
 
 message StatusMessage{
-  string type =1;
+  MessageType type =1;
   uint32 message_count=2;
   uint32 identifier=3;
 }
 
 message ErrorMessage{
-  string type =1;
+  MessageType type =1;
   string error=2;
 }

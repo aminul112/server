@@ -4,6 +4,7 @@ import random
 
 from db_operations import AsyncPgPostgresManager
 from encode_decode_executor import EncodeDecodeExecutor
+import messages_pb2 as messages
 
 log = logging.getLogger("__main__." + __name__)
 
@@ -100,7 +101,7 @@ class Server:
 
             # send 'ack' to client
             msg = {
-                "type": "heartbeat",
+                "type": messages.MessageType.MESSAGE_TYPE_HEARTBEAT,
                 "msg": "ack",
                 "client_host": host,
                 "client_port": port,
@@ -137,7 +138,11 @@ class Server:
                 host = self.active_clients_in_cache[client_id].get("client_host")
                 port = self.active_clients_in_cache[client_id].get("client_port")
 
-                msg = {"type": "status", "message_count": 0, "identifier": client_id}
+                msg = {
+                    "type": messages.MessageType.MESSAGE_TYPE_STATUS,
+                    "message_count": 0,
+                    "identifier": client_id,
+                }
 
                 client_status, count = await self.send_a_message_to_client(
                     host, port, msg
@@ -166,7 +171,7 @@ class Server:
                 # avoid sending duplicate message to client_id existing in cache and database
                 if client_id not in updated_clients_mapping:
                     msg = {
-                        "type": "status",
+                        "type": messages.MessageType.MESSAGE_TYPE_STATUS,
                         "message_count": existing_status_count,
                         "identifier": client_id,
                     }
@@ -221,7 +226,7 @@ class Server:
 
         log.info(f"Received deserialized data is {deserialized_dict}")
 
-        if deserialized_dict.get("type") == "heartbeat":
+        if deserialized_dict.get("type") == messages.MessageType.MESSAGE_TYPE_HEARTBEAT:
             client_identifier = deserialized_dict.get("identifier")
             client_host = deserialized_dict.get("client_host")
             client_port = deserialized_dict.get("client_port")
@@ -238,7 +243,7 @@ class Server:
             # do nothing as we are only expecting heartbeat message. So far we do not expect any other
             # message here. In the future, we might support other message types
             pass
-        deserialized_dict["type"] = "heartbeat"
+        deserialized_dict["type"] = messages.MessageType.MESSAGE_TYPE_HEARTBEAT
         deserialized_dict["msg"] = "ack"
         binary_data = self.encoder_decoder.encode_heartbeat(deserialized_dict)
         client_writer.write(binary_data)

@@ -1,5 +1,5 @@
-import os
 import socket
+import uvloop
 from unittest import TestCase
 
 from db_operations import AsyncPgPostgresManager
@@ -7,10 +7,9 @@ from encode_decode_executor import EncodeDecodeExecutor
 from loop_runner import LoopRunner
 from protobuf_encode_decoder import ProtobufEncoderDecoder
 from server import Server
+import messages_pb2 as messages
 
 TESTING_PORT = 8888
-
-import uvloop
 
 
 class TestServer(TestCase):
@@ -59,7 +58,7 @@ class TestServer(TestCase):
         sock.connect(server_address)
 
         msg = {
-            "type": "heartbeat",
+            "type": messages.MessageType.MESSAGE_TYPE_HEARTBEAT,
             "msg": "First Message",
             "client_host": "localhost",
             "client_port": 1000,
@@ -78,7 +77,7 @@ class TestServer(TestCase):
                 "client_port": 1000,
                 "identifier": 4567,
                 "msg": "ack",
-                "type": "heartbeat",
+                "type": messages.MessageType.MESSAGE_TYPE_HEARTBEAT,
             },
         )
 
